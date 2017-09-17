@@ -29,8 +29,13 @@ def get_all_forecasts(driver):
     forecasts = [x.get_attribute('innerHTML') for x in forecasts]
 
     fc_dicts = list()
+
     for fc in forecasts:
-        fc_dicts.append(prediction_to_dict(fc))
+        fc = prediction_to_dict(fc)
+
+        # Remove comment replies, which are presented in same hierarchy as forecasts
+        if fc is not None:
+            fc_dicts.append(fc)
 
     return fc_dicts
 
@@ -81,8 +86,14 @@ def get_my_forecasts(driver, question_url):
     # TODO remove pun
 
     pred_dicts = list()
+
+
     for p in pred_html:
-        pred_dicts.append(prediction_to_dict(p))
+        fc = prediction_to_dict(p)
+
+        # Remove comment replies, which are presented in same hierarchy as forecasts
+        if fc is not None:
+            pred_dicts.append(fc)
 
     return pred_dicts
 
@@ -91,8 +102,17 @@ def prediction_to_dict(prediction):
     d = dict()
     soup = BeautifulSoup(prediction, 'lxml')
 
+    # Ignore comment replies
+    if not soup.find(class_='prediction-set'):
+        return None
+
     d['username'] = soup.find(class_='membership-username').text
-    d['votes'] = soup.find(class_='vote-count').text
+
+    # Handle deleted comment, which deletes votes
+    votes = soup.find(class_='vote-count')
+    if hasattr(votes, 'text'):
+        d['votes'] = votes.text
+
     timestamp = soup.find(attrs={'data-localizable-timestamp': True})
     d['timestamp'] = timestamp.attrs['data-localizable-timestamp']
     d['timestamp-local'] = timestamp.text
