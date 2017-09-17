@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
+from bs4 import BeautifulSoup
 
 import time
 
@@ -30,6 +30,7 @@ def get_my_forecasts(driver, question_url):
     element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[4]/a')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     element.click()
+    time.sleep(SLEEP)
 
     # Count how many pages of predictions
     # TODO Ensure works on single page of predicitons
@@ -38,13 +39,16 @@ def get_my_forecasts(driver, question_url):
 
     cur_page = 0
 
-    predictions = list()
+    pred_html = list()
 
     # get my predictions as Selennium objects
     for n in range(0, len(a_tags) - 2):
 
         element = driver.find_element_by_id('question_my_forecasts')
-        predictions.extend(element.find_elements_by_class_name('prediction-set'))
+        #predictions.extend(element.find_elements_by_class_name('prediction-set'))
+        predictions = element.find_elements_by_class_name('prediction-set')
+        pred = [x.get_attribute('innerHTML') for x in predictions]
+        pred_html.extend(pred)
 
         next = driver.find_elements_by_link_text('Next ›')
 
@@ -55,11 +59,28 @@ def get_my_forecasts(driver, question_url):
             time.sleep(SLEEP)
 
     # TODO remove pun
-    pred_dicts = dict()
-    for p in predictions:
-        
+
+    pred_dicts = list()
+    for p in pred_html:
+        pred_dicts.append(prediction_to_dict(p))
+
+    return pred_dicts
+
 
 def prediction_to_dict(prediction):
+    d = dict()
+    soup = BeautifulSoup(prediction, 'lxml')
 
+    d['username'] = soup.find(class_='membership-username').text
+
+    answers = soup.find_all(class_='row')
+
+    for n in range(1, len(answers)):  # This skips 1st row which is just a heading
+        current = answers[n]
+        answer = current.find(class_='col-md-10').text.strip()
+        percent_assigned = current.find(class_='col-md-2').text.strip()
+        d[answer] = percent_assigned
+
+    return d
 
 
