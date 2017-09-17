@@ -46,7 +46,9 @@ def get_my_forecasts(driver, question_url):
 
         element = driver.find_element_by_id('question_my_forecasts')
         #predictions.extend(element.find_elements_by_class_name('prediction-set'))
-        predictions = element.find_elements_by_class_name('prediction-set')
+        #predictions = element.find_elements_by_class_name('prediction-set')
+        predictions = element.find_elements_by_class_name('flyover-comment')
+
         pred = [x.get_attribute('innerHTML') for x in predictions]
         pred_html.extend(pred)
 
@@ -72,6 +74,10 @@ def prediction_to_dict(prediction):
     soup = BeautifulSoup(prediction, 'lxml')
 
     d['username'] = soup.find(class_='membership-username').text
+    d['votes'] = soup.find(class_='vote-count').text
+    timestamp = soup.find(attrs={'data-localizable-timestamp': True})
+    d['timestamp'] = timestamp.attrs['data-localizable-timestamp']
+    d['timestamp-local'] = timestamp.text
 
     answers = soup.find_all(class_='row')
 
