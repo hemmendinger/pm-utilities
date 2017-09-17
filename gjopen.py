@@ -1,6 +1,6 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-
+import csv
 import time
 
 
@@ -88,5 +88,12 @@ def prediction_to_dict(prediction):
         d[answer] = percent_assigned
 
     return d
+
+
+def save_dicts_as_csv(input, filename):
+    with open(filename, 'x') as file:
+        dict_writer = csv.DictWriter(file, input[0].keys())
+        dict_writer.writeheader()
+        dict_writer.writerows(input)
 
 
