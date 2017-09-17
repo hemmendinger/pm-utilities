@@ -17,6 +17,24 @@ def get_page_driver():
     return driver
 
 
+def get_all_forecasts(driver):
+    '''
+    Assumes page is loaded and scrolled to bottom
+    Next, want to load all forecasts automatically
+    '''
+    element = driver.find_element_by_class_name('flyover-comments')
+    forecasts = element.find_elements_by_class_name('flyover-comment')
+    #soup = BeautifulSoup(element.get_attribute('innerHTML'), 'lxml')
+    #forecasts = soup.find_all('div', class_='flyover-comment')
+    forecasts = [x.get_attribute('innerHTML') for x in forecasts]
+
+    fc_dicts = list()
+    for fc in forecasts:
+        fc_dicts.append(prediction_to_dict(fc))
+
+    return fc_dicts
+
+
 def get_my_forecasts(driver, question_url):
     '''
     https://www.gjopen.com/questions/425-what-will-be-the-end-of-day-spot-price-of-an-ounce-of-gold-on-29-september-2017
