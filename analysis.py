@@ -1,6 +1,6 @@
 from datetime import datetime
 
-def calculate_daily_brier_score(forecasts, answer_keys):
+def calculate_daily_brier_score(forecasts: list, answer_keys: dict):
     '''
 
     :param forecasts:
@@ -16,7 +16,13 @@ def calculate_daily_brier_score(forecasts, answer_keys):
         pass
 
 
-def score_forecast(forecast, answer_keys):
+def score_forecast(forecast: dict, answer_keys: dict):
+    '''
+    Order is irrelevant.
+    :param forecast:
+    :param answer_keys:
+    :return:
+    '''
     # Converts string percent to decimal
     pct = lambda x: int(x.strip('%')) / 100
 
