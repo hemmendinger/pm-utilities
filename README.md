@@ -9,7 +9,11 @@ Maybe will save the cookie in the future, but am avoiding any application state 
 Make consistent in code references to predictions/forecasts, lean toward "forecast"
 Write test to compare # of forecasts retrieved to info under "Graphs & Stats" 
 Save comments made along with forecasts
+Create functions that validate retrieved data, ensuring that it meets expectations
 
+Automatically get question info along with ordering, still need user to assume if ordered scoring should be used
+
+Don't assume that a user has one and only one unique prediction for a given timestamp, could be possible
 
 ## TODO: analysis.py
 Scoring functions using forecast probabilities
@@ -19,5 +23,10 @@ Scoring functions using forecast probabilities
 - calculate median brier scores for a question
 - trying to handle data where forecasts made one 1 day are applicable until forecast changes, but seems complicated
 
-Ordered categorical scoring rule
+
+## References
+Ordered categorical scoring rule, for questions with ordered ranges; providing extra points for closeness
 - http://training.goodjudgment.com/Ordered_Categorical_Scoring_Rule.pdf
+
+
+

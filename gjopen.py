@@ -93,6 +93,14 @@ def get_my_forecasts(driver, question_url):
 
     return pred_dicts
 
+def carry_forward_my_forecasts(forecasts: list):
+    '''A forecast is carried forward from one day for each additional day that the forecast is not updated.
+    Fill in the list with these datapoints, and ensure only the last forecast for each day is used.
+    :param forecasts: list of forecast dicts
+    :return: list of forecast dicts with filled in data
+    '''
+    pass
+
 
 def prediction_to_dict(prediction):
     d = dict()
