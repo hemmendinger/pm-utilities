@@ -66,10 +66,8 @@ def get_my_forecasts(driver, question_url):
 
     # get my predictions as Selennium objects
     for n in range(0, len(a_tags) - 2):
-
         element = driver.find_element_by_id('question_my_forecasts')
-        #predictions.extend(element.find_elements_by_class_name('prediction-set'))
-        #predictions = element.find_elements_by_class_name('prediction-set')
+
         predictions = element.find_elements_by_class_name('flyover-comment')
 
         pred = [x.get_attribute('innerHTML') for x in predictions]
@@ -84,9 +82,7 @@ def get_my_forecasts(driver, question_url):
             time.sleep(SLEEP)
 
     # TODO remove pun
-
     pred_dicts = list()
-
 
     for p in pred_html:
         fc = prediction_to_dict(p)
