@@ -122,6 +122,7 @@ def filter_forecasts(forecasts: list):
     if date0 > date1:  # Forecasts in descending order (newest to oldest)
         forecasts = reversed(forecasts)
 
+    # Put users' forecasts in bins
     users = dict()
     for fc in forecasts:
         if fc['username'] not in users:
@@ -129,16 +130,17 @@ def filter_forecasts(forecasts: list):
         else:
             users[fc['username']].append(fc)
 
-    for user_forecasts in users.values():
-        filtered_user_fc = list()
-        last_date = datetime.strptime(user_forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-        hold_fc = user_forecasts[0]
-        # THIS DOES NOT WORK maybe
-        for fc in user_forecasts[1:]:
+    for user_bin in users.values():
+        user_fc = list()
+
+        last_date = datetime.strptime(user_bin[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        hold_fc = user_bin[0]
+
+        for fc in user_bin:
             if last_date < datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ'):
-                filtered_user_fc.append(hold_fc)
+                user_fc.append(hold_fc)
                 last_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-                #hold_fc =
+                hold_fc = filtered_fc
             else:
                 hold_fc = fc
 
