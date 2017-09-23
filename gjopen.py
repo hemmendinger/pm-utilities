@@ -2,6 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import csv
 import time
+from datetime import datetime
 
 
 SLEEP = 2
@@ -92,6 +93,44 @@ def get_my_forecasts(driver, question_url):
             pred_dicts.append(fc)
 
     return pred_dicts
+
+def filter_forecasts(forecasts: list):
+    '''Remove extraneous forecasts, use UTC as the cutoff
+    '''
+
+    date0 = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+
+    date1 = datetime.strptime(forecasts[1]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+
+    if date0 > date1:  # Forecasts in descending order (newest to oldest)
+        forecasts = reversed(forecasts)
+
+    users = dict()
+    for fc in forecasts:
+        if fc['username'] not in users:
+            users[fc['username']] = [fc]
+        else:
+            users[fc['username']].append(fc)
+
+    for user_forecasts in users.values():
+        filtered_user_fc = list()
+        last_date = datetime.strptime(user_forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        hold_fc = user_forecasts[0]
+        # THIS DOES NOT WORK maybe
+        for fc in user_forecasts[1:]:
+            if last_date < datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ'):
+                filtered_user_fc.append(hold_fc)
+                last_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                hold_fc =
+            else:
+                hold_fc = fc
+
+
+
+
+
+    return users
+
 
 def carry_forward_my_forecasts(forecasts: list):
     '''A forecast is carried forward from one day for each additional day that the forecast is not updated.
