@@ -17,6 +17,22 @@ def get_page_driver():
 
     return driver
 
+def get_question_stats(driver):
+    element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[3]/a')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    element.click()
+    time.sleep(SLEEP)
+
+    div = driver.find_element_by_id('question_stats')  # container for row of stats
+    h2 = div.find_elements_by_tag_name('h2')  # each stat enclosed in an h2 tag
+
+    stats = dict()
+    stats['no of forecasters'] = int(h2[0].text)
+    stats['forecast count'] = int(h2[1].text)
+    stats['forecasts last 24 hours'] = int(h2[2].text)
+    stats['my no of forecasts'] = int(h2[3].text)
+
+    return stats
 
 def get_all_forecasts(driver):
     '''
