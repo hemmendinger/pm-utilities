@@ -6,6 +6,10 @@ Maybe will save the cookie in the future, but am avoiding any application state 
 
 
 ## TODO: gjopen.py
+Getting graph and stats info
+- Need total forecasts for knowing how many pages of forecasts to retrieve 
+- Test to see if total forecasts = total forecasts in stats, they may not match up if only 1 forecasts per user is counted
+
 Make consistent in code references to predictions/forecasts, lean toward "forecast"
 Write test to compare # of forecasts retrieved to info under "Graphs & Stats" 
 Save comments made along with forecasts
@@ -23,10 +27,14 @@ Scoring functions using forecast probabilities
 - calculate median brier scores for a question
 - trying to handle data where forecasts made one 1 day are applicable until forecast changes, but seems complicated
 
+## Incomplete Functions
+### gjopen.py
+filter_forecasts
+carry_forward_my_forecasts
 
 ## References
 Ordered categorical scoring rule, for questions with ordered ranges; providing extra points for closeness
 - http://training.goodjudgment.com/Ordered_Categorical_Scoring_Rule.pdf
-
+- https://www.gjopen.com/faq
 
 
