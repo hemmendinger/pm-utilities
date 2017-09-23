@@ -121,13 +121,9 @@ def filter_forecasts(forecasts: list):
             if last_date < datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ'):
                 filtered_user_fc.append(hold_fc)
                 last_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-                hold_fc =
+                #hold_fc =
             else:
                 hold_fc = fc
-
-
-
-
 
     return users
 
