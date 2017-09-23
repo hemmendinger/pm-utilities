@@ -7,6 +7,7 @@ from datetime import datetime
 
 SLEEP = 2
 
+
 def get_page_driver():
     url = 'https://www.gjopen.com/users/sign_in'
 
@@ -16,6 +17,7 @@ def get_page_driver():
     input("Press enter to continue")
 
     return driver
+
 
 def get_question_stats(driver):
     element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[3]/a')
@@ -34,11 +36,11 @@ def get_question_stats(driver):
 
     return stats
 
+
 def get_all_forecasts(driver):
-    '''
-    Assumes page is loaded and scrolled to bottom
+    """Assumes page is loaded and scrolled to bottom
     Next, want to load all forecasts automatically
-    '''
+    """
     element = driver.find_element_by_class_name('flyover-comments')
     forecasts = element.find_elements_by_class_name('flyover-comment')
     #soup = BeautifulSoup(element.get_attribute('innerHTML'), 'lxml')
@@ -58,12 +60,12 @@ def get_all_forecasts(driver):
 
 
 def get_my_forecasts(driver, question_url):
-    '''
+    """
     https://www.gjopen.com/questions/425-what-will-be-the-end-of-day-spot-price-of-an-ounce-of-gold-on-29-september-2017
     <a data-remote="true" href="/memberships/14847/forecast_history?page=3&amp;question_id=425">Last »</a>
     :param question_url:
     :return:
-    '''
+    """
     driver.get(question_url)
 
     # Click on "My Forecasts"
@@ -77,8 +79,6 @@ def get_my_forecasts(driver, question_url):
     pagination = driver.find_element_by_class_name('pagination')
     a_tags = pagination.find_elements_by_tag_name('a')
 
-    cur_page = 0
-
     pred_html = list()
 
     # get my predictions as Selennium objects
@@ -90,11 +90,11 @@ def get_my_forecasts(driver, question_url):
         pred = [x.get_attribute('innerHTML') for x in predictions]
         pred_html.extend(pred)
 
-        next = driver.find_elements_by_link_text('Next ›')
+        next_link = driver.find_elements_by_link_text('Next ›')
 
-        if next:
-            driver.execute_script("arguments[0].scrollIntoView();", next[0])
-            next[0].click()
+        if next_link:
+            driver.execute_script("arguments[0].scrollIntoView();", next_link[0])
+            next_link[0].click()
 
             time.sleep(SLEEP)
 
@@ -110,9 +110,10 @@ def get_my_forecasts(driver, question_url):
 
     return pred_dicts
 
+
 def filter_forecasts(forecasts: list):
-    '''Remove extraneous forecasts, use UTC as the cutoff
-    '''
+    """Remove extraneous forecasts, use UTC as the cutoff
+    """
 
     date0 = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
 
@@ -145,11 +146,11 @@ def filter_forecasts(forecasts: list):
 
 
 def carry_forward_my_forecasts(forecasts: list):
-    '''A forecast is carried forward from one day for each additional day that the forecast is not updated.
+    """A forecast is carried forward from one day for each additional day that the forecast is not updated.
     Fill in the list with these datapoints, and ensure only the last forecast for each day is used.
     :param forecasts: list of forecast dicts
     :return: list of forecast dicts with filled in data
-    '''
+    """
     pass
 
 
@@ -183,10 +184,8 @@ def prediction_to_dict(prediction):
     return d
 
 
-def save_dicts_as_csv(input, filename):
+def save_dicts_as_csv(data_dict, filename):
     with open(filename, 'x') as file:
-        dict_writer = csv.DictWriter(file, input[0].keys())
+        dict_writer = csv.DictWriter(file, data_dict[0].keys())
         dict_writer.writeheader()
-        dict_writer.writerows(input)
-
-
+        dict_writer.writerows(data_dict)
