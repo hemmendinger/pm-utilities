@@ -1,13 +1,12 @@
 from datetime import datetime
-from collections import OrderedDict
+
 
 def calculate_daily_brier_score(forecasts: list, answer_keys: dict):
-    '''
-
+    """
     :param forecasts:
     :param answer_keys: Dictionary with answer keys as keys and True or False as the values
     :return:
-    '''
+    """
 
     # timestamp formatted as  '2017-09-03T16:31:49Z'
     prev_dt = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
@@ -18,12 +17,12 @@ def calculate_daily_brier_score(forecasts: list, answer_keys: dict):
 
 
 def score_forecast(forecast: dict, answer_key: dict):
-    '''
+    """
     Order is irrelevant.
     :param forecast:
     :param answer_key:
     :return:
-    '''
+    """
     # Converts string percent to decimal
     pct = lambda x: int(x.strip('%')) / 100
 
@@ -39,12 +38,12 @@ def score_forecast(forecast: dict, answer_key: dict):
 
 
 def score_ordered_forecast(forecast: dict, answer_key: dict, answer_order: dict):
-    '''
+    """
     :param forecast: {'answer a': 'value%', ...
     :param answer_key: {'answer a': True, ...
     :param answer_order: {1: 'answer a', 2: 'answer b', ...
     :return:
-    '''
+    """
     start = list()
     end = list()
 
@@ -80,7 +79,7 @@ def score_ordered_forecast(forecast: dict, answer_key: dict, answer_order: dict)
 
     return score / groups
 
+
 def sum_from_keys(keys, lookup):
 
     return sum([lookup[k] for k in keys])
-
