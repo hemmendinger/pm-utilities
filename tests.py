@@ -1,5 +1,6 @@
 import unittest
 import analysis
+import gjopen
 
 answer_keys_original = {
     'Less than 967.33': False,
@@ -79,6 +80,62 @@ class TestScoreOrderedForecast(unittest.TestCase):
                 answer_key=self.answer_key,
                 answer_order=self.answer_order),
             0.235)
+
+class TestFilteredForecasts(unittest.TestCase):
+    forecasts_2 = [
+        {'last forecast': True,
+        'timestamp': '2016-02-29T12:00:01Z',
+        'username': 'TestUser'},
+        {'last forecast': True,
+        'timestamp': '2016-03-01T01:00:01Z',
+        'username': 'TestUser'}
+    ]
+
+
+    forecasts_5 = [
+        {'last forecast': False,
+        'timestamp': '2016-02-29T12:00:01Z',
+        'username': 'TestUser'},
+        {'last forecast': True,
+        'timestamp': '2016-02-29T12:00:01Z',
+        'username': 'TestUser'},
+        {'last forecast': False,
+        'timestamp': '2016-03-01T01:00:01Z',
+        'username': 'TestUser'},
+        {'last forecast': False,
+        'timestamp': '2016-03-01T01:00:02Z',
+        'username': 'TestUser'},
+        {'last forecast': True,
+        'timestamp': '2016-03-01T01:00:03Z',
+        'username': 'TestUser'}
+    ]
+
+    def test_last_forecasts_2(self):
+        result = [
+            {'last forecast': True,
+            'timestamp': '2016-02-29T12:00:01Z',
+            'username': 'TestUser'},
+            {'last forecast': True,
+            'timestamp': '2016-03-01T01:00:01Z',
+            'username': 'TestUser'}
+        ]
+        self.assertEqual(gjopen.last_forecast_per_day(self.forecasts_2), result)
+
+    def test_last_forecasts_5(self):
+        result = [
+            {'last forecast': True,
+            'timestamp': '2016-02-29T12:00:01Z',
+            'username': 'TestUser'},
+            {'last forecast': True,
+            'timestamp': '2016-03-01T01:00:03Z',
+            'username': 'TestUser'}
+        ]
+
+        self.assertEqual(gjopen.last_forecast_per_day(self.forecasts_5), result)
+
+    def test_last_forecasts_only_one(self):
+        result = [{'last forecast': True, 'timestamp': '2016-02-29T12:00:01Z', 'username': 'TestUser'}]
+        self.assertEqual(gjopen.last_forecast_per_day(result), result)
 
 
 
