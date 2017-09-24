@@ -2,8 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import csv
 import time
-from datetime import datetime
-
+import datetime
 
 SLEEP = 2
 
@@ -115,9 +114,9 @@ def filter_forecasts(forecasts: list):
     """Remove extraneous forecasts, use UTC as the cutoff
     """
 
-    date0 = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+    date0 = datetime.datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
 
-    date1 = datetime.strptime(forecasts[1]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+    date1 = datetime.datetime.strptime(forecasts[1]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
 
     if date0 > date1:  # Forecasts in descending order (newest to oldest)
         forecasts = reversed(forecasts)
@@ -146,8 +145,8 @@ def filter_last_forecast_per_day(forecasts: list):
     loop = True
     saved_forecasts = list()
     while loop:
-        date = datetime.strptime(forecasts[idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-        next_date = datetime.strptime(forecasts[next_idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        date = datetime.datetime.strptime(forecasts[idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        next_date = datetime.datetime.strptime(forecasts[next_idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
 
         if date.date() < next_date.date():
             saved_forecasts.append(forecasts[idx])
@@ -170,7 +169,8 @@ def carry_forward_my_forecasts(forecasts: list, answers):
     """
     pass
 
-def carry_forward_forecasts(forecasts: list, answers, start_date: datetime, end_date: datetime):
+
+def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.datetime, end_date: datetime.datetime):
     """
     Adds a field denoting if a forecast is a user update or carried forward.
     :param forecasts: Must contain only 1 forecast per user for each day
@@ -179,15 +179,15 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime, end_
     """
 
     # No forecasts exist for days that have not happened
-    if end_date.date() > datetime.utcnow().date():
-        end_date = datetime.utcnow()
+    if end_date.date() > datetime.datetime.utcnow().date():
+        end_date = datetime.datetime.utcnow()
 
     days = dict()
 
-    dates = [ start_date + datetime.timedelta(n) for n in range(int ((end_date - start_date).days))]
+    dates = [start_date + datetime.datetime.timedelta(n) for n in range(int((end_date - start_date).days))]
 
     for fc in forecasts:
-        cur_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+        cur_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
         if cur_date not in days:
             days[cur_date] = list()
 
@@ -198,26 +198,13 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime, end_
         elif cur_date > end_date:
             end_date = cur_date
 
-
-
     participants = dict()
 
-
-
-    for dt,daily_fc_list in days.items():
+    for dt, daily_fc_list in days.items():
         for fc in daily_fc_list:
             # Effectively adds participants with their initial forecast
             # or updates a participant's last forecast
             participants[fc['username']] = fc
-
-
-
-
-
-
-
-
-
 
 
 def prediction_to_dict(prediction):
