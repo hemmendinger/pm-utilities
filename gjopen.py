@@ -130,21 +130,40 @@ def filter_forecasts(forecasts: list):
         else:
             users[fc['username']].append(fc)
 
+    filtered_forecasts = []
     for user_bin in users.values():
-        user_fc = list()
+        filtered_forecasts.extend(filter_last_forecast_per_day(user_bin))
 
-        last_date = datetime.strptime(user_bin[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-        hold_fc = user_bin[0]
+    return filtered_forecasts
 
-        for fc in user_bin:
-            if last_date < datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ'):
-                user_fc.append(hold_fc)
-                last_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-                hold_fc = filtered_fc
-            else:
-                hold_fc = fc
 
-    return users
+def filter_last_forecast_per_day(forecasts: list):
+    if len(forecasts) == 1:
+        return forecasts
+
+    idx = 0
+    next_idx = 1
+    loop = True
+    saved_forecasts = list()
+    while loop:
+        date = datetime.strptime(forecasts[idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        next_date = datetime.strptime(forecasts[next_idx]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+
+        if date.date() < next_date.date():
+            saved_forecasts.append(forecasts[idx])
+
+        idx += 1
+        next_idx += 1
+
+        if next_idx == len(forecasts):
+            saved_forecasts.append(forecasts[next_idx - 1])
+            loop = False
+
+    return saved_forecasts
+
+
+
+
 
 
 def carry_forward_my_forecasts(forecasts: list):
