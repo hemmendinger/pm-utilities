@@ -170,7 +170,7 @@ def carry_forward_my_forecasts(forecasts: list, answers):
     """
     pass
 
-def carry_forward_forecasts(forecasts: list, answers, start_date, end_date):
+def carry_forward_forecasts(forecasts: list, answers, start_date: datetime, end_date: datetime):
     """
     Adds a field denoting if a forecast is a user update or carried forward.
     :param forecasts: Must contain only 1 forecast per user for each day
@@ -178,10 +178,14 @@ def carry_forward_forecasts(forecasts: list, answers, start_date, end_date):
     :return:
     """
 
-    start_date = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
-    end_date = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+    # No forecasts exist for days that have not happened
+    if end_date.date() > datetime.utcnow().date():
+        end_date = datetime.utcnow()
 
     days = dict()
+
+    dates = [ start_date + datetime.timedelta(n) for n in range(int ((end_date - start_date).days))]
+
     for fc in forecasts:
         cur_date = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
         if cur_date not in days:
