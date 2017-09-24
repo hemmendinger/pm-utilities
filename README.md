@@ -4,6 +4,12 @@ http://github.com/hemmendinger/gjopen-utilities
 Credentials: I figured it is least annoying to just login manually. 
 Maybe will save the cookie in the future, but am avoiding any application state for now. 
 
+## TODO: Timestamp handling
+It might be necessary to explictly be setting a time as a UTC time,
+or we may be accidentally comparing between UTC and a different timezone
+Write tests to detect this mistake when possible
+
+
 ## TODO: Implement state saving
 Want to store/track previous data retrieved so we can just get most recent
 
