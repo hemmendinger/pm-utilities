@@ -99,6 +99,6 @@ def question_daily_average(forecasts: list, answers: list):
             #days[timestamp.date()]['sum forecasts'] = 0
 
         days[timestamp.date()]['total forecasts'] += 1
-        days[timestamp.date()]['sum forecasts'] += fc[]
+        #days[timestamp.date()]['sum forecasts'] += fc[]
 
 
