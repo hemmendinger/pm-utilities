@@ -83,3 +83,22 @@ def score_ordered_forecast(forecast: dict, answer_key: dict, answer_order: dict)
 def sum_from_keys(keys, lookup):
 
     return sum([lookup[k] for k in keys])
+
+
+def question_daily_average(forecasts: list, answers: list):
+    days = dict()
+
+    for fc in forecasts:
+        timestamp = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        if timestamp.date() not in days:
+            days[timestamp.date()] = dict()
+            # this will increase as the number of forecasters participating increases
+            # basically a tally of participants since people can't stop forecasting, last forecast always carries forward
+            days[timestamp.date()]['total forecasts'] = 0
+            # Need this per answer
+            #days[timestamp.date()]['sum forecasts'] = 0
+
+        days[timestamp.date()]['total forecasts'] += 1
+        days[timestamp.date()]['sum forecasts'] += fc[]
+
+
