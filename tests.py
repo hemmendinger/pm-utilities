@@ -110,7 +110,7 @@ class TestFilteredForecasts(unittest.TestCase):
         'username': 'TestUser'}
     ]
 
-    def test_last_forecasts_2(self):
+    def test_filter_last_forecasts_2(self):
         result = [
             {'last forecast': True,
             'timestamp': '2016-02-29T12:00:01Z',
@@ -119,9 +119,9 @@ class TestFilteredForecasts(unittest.TestCase):
             'timestamp': '2016-03-01T01:00:01Z',
             'username': 'TestUser'}
         ]
-        self.assertEqual(gjopen.last_forecast_per_day(self.forecasts_2), result)
+        self.assertEqual(gjopen.filter_last_forecast_per_day(self.forecasts_2), result)
 
-    def test_last_forecasts_5(self):
+    def test_filter_last_forecasts_5(self):
         result = [
             {'last forecast': True,
             'timestamp': '2016-02-29T12:00:01Z',
@@ -131,11 +131,11 @@ class TestFilteredForecasts(unittest.TestCase):
             'username': 'TestUser'}
         ]
 
-        self.assertEqual(gjopen.last_forecast_per_day(self.forecasts_5), result)
+        self.assertEqual(gjopen.filter_last_forecast_per_day(self.forecasts_5), result)
 
-    def test_last_forecasts_only_one(self):
+    def test_filter_last_forecasts_only_one(self):
         result = [{'last forecast': True, 'timestamp': '2016-02-29T12:00:01Z', 'username': 'TestUser'}]
-        self.assertEqual(gjopen.last_forecast_per_day(result), result)
+        self.assertEqual(gjopen.filter_last_forecast_per_day(result), result)
 
 
 
