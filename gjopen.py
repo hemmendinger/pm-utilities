@@ -18,7 +18,7 @@ def get_page_driver():
     return driver
 
 
-def get_question_stats(driver):
+def get_question_info(driver):
     element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[3]/a')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     element.click()
@@ -27,13 +27,17 @@ def get_question_stats(driver):
     div = driver.find_element_by_id('question_stats')  # container for row of stats
     h2 = div.find_elements_by_tag_name('h2')  # each stat enclosed in an h2 tag
 
-    stats = dict()
-    stats['no of forecasters'] = int(h2[0].text)
-    stats['forecast count'] = int(h2[1].text)
-    stats['forecasts last 24 hours'] = int(h2[2].text)
-    stats['my no of forecasts'] = int(h2[3].text)
+    info = dict()
+    info['no of forecasters'] = int(h2[0].text)
+    info['forecast count'] = int(h2[1].text)
+    info['forecasts last 24 hours'] = int(h2[2].text)
+    info['my no of forecasts'] = int(h2[3].text)
 
-    return stats
+    # Get answer choices
+
+    info['answers'] = [x.text for x in driver.find_elements_by_class_name('answer-name')]
+
+    return info
 
 
 def get_all_forecasts(driver):
@@ -196,7 +200,6 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.datet
             # or updates a participant's last forecast
             participants[fc['username']] = fc
 
-    
 
 def prediction_to_dict(prediction):
     d = dict()
