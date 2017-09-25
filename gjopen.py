@@ -188,7 +188,7 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date,
 
     days = {start_date + datetime.timedelta(n): list() for n in range(int((end_date - start_date).days + 1))}
 
-    date_keys = [start_date + datetime.timedelta(n) for n in range(int((end_date - start_date).days))]
+    date_keys = [start_date + datetime.timedelta(n) for n in range(int((end_date - start_date).days + 1))]
 
     for fc in forecasts:
         fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
@@ -203,6 +203,7 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date,
                 participants[fc['username']] = fc
 
     return participants
+
 
     # this is unordered
     '''for date, daily_fc_list in days.items():
