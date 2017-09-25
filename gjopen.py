@@ -174,7 +174,7 @@ def carry_forward_my_forecasts(forecasts: list, answers):
     pass
 
 
-def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.datetime, end_date: datetime.datetime):
+def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date, end_date: datetime.date):
     """
     Adds a field denoting if a forecast is a user update or carried forward.
     :param forecasts: Must contain only 1 forecast per user for each day
@@ -186,19 +186,33 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.datet
     if end_date > datetime.datetime.utcnow().date():
         end_date = datetime.datetime.utcnow().date()
 
-    days = {start_date + datetime.timedelta(n): list() for n in range(int((end_date - start_date).days))}
+    days = {start_date + datetime.timedelta(n): list() for n in range(int((end_date - start_date).days + 1))}
+
+    date_keys = [start_date + datetime.timedelta(n) for n in range(int((end_date - start_date).days))]
 
     for fc in forecasts:
         fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+
         days[fc_date].append(fc)
 
     participants = dict()
 
-    for date, daily_fc_list in days.items():
+    for date in date_keys:
+        if date in days:
+            for fc in days[date]:
+                participants[fc['username']] = fc
+
+    return participants
+
+    # this is unordered
+    '''for date, daily_fc_list in days.items():
         for fc in daily_fc_list:
             # Effectively adds participants with their initial forecast
             # or updates a participant's last forecast
-            participants[fc['username']] = fc
+            participants[fc['username']] = fc'''
+
+
+
 
 
 def prediction_to_dict(prediction):
