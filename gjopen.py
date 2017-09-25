@@ -255,6 +255,12 @@ def save_forecasts_csv(data_dict, filename, key_order=None):
 
     if key_order:
         order = ['timestamp', 'username',]
+
+        # Allows including timestamp, username in key_order
+        for item in key_order:
+            if item in order:
+                order.remove(item)
+
         for key in key_order:
             order.append(key)
 
