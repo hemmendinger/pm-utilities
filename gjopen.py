@@ -251,8 +251,24 @@ def prediction_to_dict(prediction):
     return d
 
 
-def save_dicts_as_csv(data_dict, filename):
+def save_forecasts_csv(data_dict, filename, key_order=None):
+
+    if key_order:
+        order = ['timestamp', 'username',]
+        for key in key_order:
+            order.append(key)
+
+        unordered_keys = [x for x in data_dict[0].keys()]
+
+        for item in order:
+            unordered_keys.remove(item)
+
+        order.extend(unordered_keys)
+        key_order = order
+    else:
+        key_order = data_dict[0].keys()
+
     with open(filename, 'x') as file:
-        dict_writer = csv.DictWriter(file, data_dict[0].keys())
+        dict_writer = csv.DictWriter(file, key_order)
         dict_writer.writeheader()
         dict_writer.writerows(data_dict)
