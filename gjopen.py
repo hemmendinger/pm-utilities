@@ -179,33 +179,24 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.datet
     """
 
     # No forecasts exist for days that have not happened
-    if end_date.date() > datetime.datetime.utcnow().date():
-        end_date = datetime.datetime.utcnow()
+    if end_date > datetime.datetime.utcnow().date():
+        end_date = datetime.datetime.utcnow().date()
 
-    days = dict()
-
-    dates = [start_date + datetime.datetime.timedelta(n) for n in range(int((end_date - start_date).days))]
+    days = {start_date + datetime.timedelta(n): list() for n in range(int((end_date - start_date).days))}
 
     for fc in forecasts:
-        cur_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
-        if cur_date not in days:
-            days[cur_date] = list()
-
-        days[cur_date].append(fc)
-
-        if cur_date < start_date:
-            start_date = cur_date
-        elif cur_date > end_date:
-            end_date = cur_date
+        fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+        days[fc_date].append(fc)
 
     participants = dict()
 
-    for dt, daily_fc_list in days.items():
+    for date, daily_fc_list in days.items():
         for fc in daily_fc_list:
             # Effectively adds participants with their initial forecast
             # or updates a participant's last forecast
             participants[fc['username']] = fc
 
+    
 
 def prediction_to_dict(prediction):
     d = dict()
