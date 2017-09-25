@@ -174,7 +174,7 @@ def carry_forward_my_forecasts(forecasts: list, answers):
     pass
 
 
-def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date, end_date: datetime.date):
+def carry_forward_forecasts(forecasts: list, start_date: datetime.date, end_date: datetime.date):
     """
     Adds a field denoting if a forecast is a user update or carried forward.
     :param forecasts: Must contain only 1 forecast per user for each day
@@ -193,8 +193,9 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date,
     # Put forecasts into bins by date using UTC timestamp
     for fc in forecasts:
         fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
-        fc['carryover'] = False
-        days[fc_date].append(fc)
+        fc_copy = fc.copy()  # Prevent mutating input
+        fc_copy['carryforward'] = False
+        days[fc_date].append(fc_copy)
 
     participants = dict()
     processed = list()
@@ -202,23 +203,20 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date,
     for date in date_keys:
         # Iterate over list of forecasts for specific date
         for fc in days[date]:
-            participants[fc['username']] = fc
-
+            participants[fc['username']] = fc.copy()
 
         for user,fc in participants.items():
-            print(user,fc)
             fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
 
+            # If forecast is from a previous date, need to carry it forward
             if fc_date != date:
-                fc['carryover'] = True
+                fc['carryforward'] = True
                 fc['timestamp'] = datetime.datetime.strftime(date, '%Y-%m-%dT%H:%M:%SZ')
-                # fc['timestamp-local'] Choosing not to update this field for now
-                days[date].append(fc)
+                fc['timestamp-local'] = ''
+                fc_copy = fc.copy()
+                processed.append(fc_copy)
             else:
-                fc['carryover'] = False
-
-
-            processed.append(fc)
+                processed.append(fc.copy())
 
     return processed
 
