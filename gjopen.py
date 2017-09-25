@@ -186,34 +186,41 @@ def carry_forward_forecasts(forecasts: list, answers, start_date: datetime.date,
     if end_date > datetime.datetime.utcnow().date():
         end_date = datetime.datetime.utcnow().date()
 
-    days = {start_date + datetime.timedelta(n): list() for n in range(int((end_date - start_date).days + 1))}
-
+    # Generate set of sequential dates for keys
     date_keys = [start_date + datetime.timedelta(n) for n in range(int((end_date - start_date).days + 1))]
+    days = {key: list() for key in date_keys}
 
+    # Put forecasts into bins by date using UTC timestamp
     for fc in forecasts:
         fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
-
+        fc['carryover'] = False
         days[fc_date].append(fc)
 
     participants = dict()
+    processed = list()
 
     for date in date_keys:
-        if date in days:
-            for fc in days[date]:
-                participants[fc['username']] = fc
-
-    return participants
+        # Iterate over list of forecasts for specific date
+        for fc in days[date]:
+            participants[fc['username']] = fc
 
 
-    # this is unordered
-    '''for date, daily_fc_list in days.items():
-        for fc in daily_fc_list:
-            # Effectively adds participants with their initial forecast
-            # or updates a participant's last forecast
-            participants[fc['username']] = fc'''
+        for user,fc in participants.items():
+            print(user,fc)
+            fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+
+            if fc_date != date:
+                fc['carryover'] = True
+                fc['timestamp'] = datetime.datetime.strftime(date, '%Y-%m-%dT%H:%M:%SZ')
+                # fc['timestamp-local'] Choosing not to update this field for now
+                days[date].append(fc)
+            else:
+                fc['carryover'] = False
 
 
+            processed.append(fc)
 
+    return processed
 
 
 def prediction_to_dict(prediction):
