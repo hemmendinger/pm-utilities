@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 
 def calculate_daily_brier_score(forecasts: list, answer_keys: dict):
@@ -9,7 +9,7 @@ def calculate_daily_brier_score(forecasts: list, answer_keys: dict):
     """
 
     # timestamp formatted as  '2017-09-03T16:31:49Z'
-    prev_dt = datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+    prev_dt = datetime.datetime.strptime(forecasts[0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
 
     for fc in forecasts:
         # see if date is equal to same day as prev, if
@@ -85,20 +85,46 @@ def sum_from_keys(keys, lookup):
     return sum([lookup[k] for k in keys])
 
 
-def question_daily_average(forecasts: list, answers: list):
+def question_daily_average(forecasts: list, info: dict):
+
+    open_date = info['open'].date()
+    close_date = info['close'].date()
+
+    # No forecasts exist for days that have not happened
+    if close_date > datetime.datetime.utcnow().date():
+        close_date = datetime.datetime.utcnow().date()
+
     days = dict()
 
+    date_keys = [open_date + datetime.timedelta(n) for n in range(int((close_date - open_date).days + 1))]
+    days = {key: list() for key in date_keys}
+    #print(days)
+
     for fc in forecasts:
-        timestamp = datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-        if timestamp.date() not in days:
-            days[timestamp.date()] = dict()
-            # this will increase as the number of forecasters participating increases
-            # basically a tally of participants since people can't stop forecasting, last forecast always carries forward
-            days[timestamp.date()]['total forecasts'] = 0
-            # Need this per answer
-            #days[timestamp.date()]['sum forecasts'] = 0
+        fc_date = datetime.datetime.strptime(fc['timestamp'], '%Y-%m-%dT%H:%M:%SZ').date()
+        days[fc_date].append(fc)
 
-        days[timestamp.date()]['total forecasts'] += 1
-        #days[timestamp.date()]['sum forecasts'] += fc[]
+    #print(days)
+    averages = list()
+
+    pct = lambda x: int(x.strip('%')) / 100
+
+    for date in date_keys:
+        avg = dict()
+        avg['forecasts'] = 0
+        avg['date'] = date
+        for ans in info['answers']:
+            avg[ans] = 0
+
+        for fc in days[date]:
+            avg['forecasts'] += 1
+            for ans in info['answers']:
+                avg[ans] += pct(fc[ans])
+
+        for ans in info['answers']:
+            avg[ans] = avg[ans] / avg['forecasts']
 
 
+        averages.append(avg)
+
+    return averages
