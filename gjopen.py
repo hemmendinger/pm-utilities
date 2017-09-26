@@ -34,8 +34,16 @@ def get_question_info(driver):
     info['my no of forecasts'] = int(h2[3].text)
 
     # Get answer choices
-
     info['answers'] = [x.text for x in driver.find_elements_by_class_name('answer-name')]
+
+    # Get question open and close UTC times
+    open = driver.find_element_by_xpath('//*[@id="main-container"]/div[2]/div[1]/div[1]/div[1]/span[2]/small/span')
+    open = open.get_attribute('data-localizable-timestamp')
+    info['open'] = datetime.datetime.strptime(open, '%Y-%m-%dT%H:%M:%SZ')
+
+    close = driver.find_element_by_xpath('//*[@id="main-container"]/div[2]/div[1]/div[1]/div[1]/span[4]/small/span')
+    close = close.get_attribute('data-localizable-timestamp')
+    info['close'] = datetime.datetime.strptime(close, '%Y-%m-%dT%H:%M:%SZ')
 
     return info
 
