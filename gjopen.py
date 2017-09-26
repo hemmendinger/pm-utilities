@@ -48,14 +48,13 @@ def get_question_info(driver):
     return info
 
 
-def get_all_forecasts(driver):
-    """Assumes page is loaded and scrolled to bottom
-    Next, want to load all forecasts automatically
+def get_loaded_forecasts(driver):
+    """
+    Retrieves any forecasts loaded by the page 
+    To get all forcasts: all pages of forecasts must be loaded by scrolling repeatedly to the bottom of th epage
     """
     element = driver.find_element_by_class_name('flyover-comments')
     forecasts = element.find_elements_by_class_name('flyover-comment')
-    #soup = BeautifulSoup(element.get_attribute('innerHTML'), 'lxml')
-    #forecasts = soup.find_all('div', class_='flyover-comment')
     forecasts = [x.get_attribute('innerHTML') for x in forecasts]
 
     fc_dicts = list()
