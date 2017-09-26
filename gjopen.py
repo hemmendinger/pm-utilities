@@ -286,3 +286,16 @@ def save_forecasts_csv(data_dict, filename, key_order=None):
         dict_writer = csv.DictWriter(file, key_order)
         dict_writer.writeheader()
         dict_writer.writerows(data_dict)
+
+def save_averages(data, filename, key_order):
+    order = list()
+
+    order.append('date')
+    order.append('forecasts')
+    for item in key_order:
+        order.append(item)
+
+    with open(filename, 'x') as file:
+        dict_writer = csv.DictWriter(file, order)
+        dict_writer.writeheader()
+        dict_writer.writerows(data)
