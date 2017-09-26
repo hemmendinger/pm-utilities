@@ -9,6 +9,8 @@ It might be necessary to explictly be setting a time as a UTC time,
 or we may be accidentally comparing between UTC and a different timezone
 Write tests to detect this mistake when possible
 
+It could simplify things a lot if we just sorted lists by date, rather than defending against unsorted lists of dicts,
+but "defending" seems to be convenient for the current workflow
 
 ## TODO: Implement state saving
 Want to store/track previous data retrieved so we can just get most recent
