@@ -50,7 +50,7 @@ def get_question_info(driver):
 
 def get_loaded_forecasts(driver):
     """
-    Retrieves any forecasts loaded by the page 
+    Retrieves any forecasts loaded by the page
     To get all forcasts: all pages of forecasts must be loaded by scrolling repeatedly to the bottom of th epage
     """
     element = driver.find_element_by_class_name('flyover-comments')
@@ -69,20 +69,24 @@ def get_loaded_forecasts(driver):
     return fc_dicts
 
 
-def get_my_forecasts(driver, question_url):
+def get_my_forecasts(driver, question_url=None):
     """
     https://www.gjopen.com/questions/425-what-will-be-the-end-of-day-spot-price-of-an-ounce-of-gold-on-29-september-2017
     <a data-remote="true" href="/memberships/14847/forecast_history?page=3&amp;question_id=425">Last »</a>
     :param question_url:
     :return:
     """
-    driver.get(question_url)
+    # Optionally pass URL to load, else use currently loaded page
+    if question_url:
+        driver.get(question_url)
 
-    # Click on "My Forecasts"
-    element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[4]/a')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    element.click()
-    time.sleep(SLEEP)
+    # Navigate to "My Forecasts"
+    # Note: Menu elements can vary, such as when question have "Clarifications" added
+    for element in driver.find_element_by_id('question-detail-tabs').find_elements_by_tag_name('li'):
+        if element.text == 'My Forecasts':
+            driver.execute_script("arguments[0].scrollIntoView();", element)
+            element.click()
+            time.sleep(SLEEP)
 
     # Count how many pages of predictions
     # TODO Ensure works on single page of predicitons
