@@ -128,3 +128,13 @@ def question_daily_average(forecasts: list, info: dict):
         averages.append(avg)
 
     return averages
+
+
+def get_user_forecasts(complete: list, username):
+    forecasts = list()
+
+    for fc in complete:
+        if fc['username'] == username:
+            forecasts.append(fc.copy())
+
+    return forecasts
