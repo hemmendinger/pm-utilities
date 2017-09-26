@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 import csv
 import time
@@ -88,29 +89,37 @@ def get_my_forecasts(driver, question_url=None):
             element.click()
             time.sleep(SLEEP)
 
-    # Count how many pages of predictions
-    # TODO Ensure works on single page of predicitons
-    pagination = driver.find_element_by_class_name('pagination')
-    a_tags = pagination.find_elements_by_tag_name('a')
-
     pred_html = list()
 
-    # get my predictions as Selennium objects
-    for n in range(0, len(a_tags) - 2):
+    # Handle for single page of forecasts vs. paginated forecasts
+    try:
+        # Count how many pages of forecasts (if pagination exists)
+        pagination = driver.find_element_by_class_name('pagination')
+        a_tags = pagination.find_elements_by_tag_name('a')
+
+        # get my forecasts as Selennium objects
+        for n in range(0, len(a_tags) - 2):
+            element = driver.find_element_by_id('question_my_forecasts')
+
+            predictions = element.find_elements_by_class_name('flyover-comment')
+
+            pred = [x.get_attribute('innerHTML') for x in predictions]
+            pred_html.extend(pred)
+
+            next_link = driver.find_elements_by_link_text('Next ›')
+
+            if next_link:
+                driver.execute_script("arguments[0].scrollIntoView();", next_link[0])
+                next_link[0].click()
+
+                time.sleep(SLEEP)
+    except NoSuchElementException:
         element = driver.find_element_by_id('question_my_forecasts')
 
         predictions = element.find_elements_by_class_name('flyover-comment')
 
         pred = [x.get_attribute('innerHTML') for x in predictions]
         pred_html.extend(pred)
-
-        next_link = driver.find_elements_by_link_text('Next ›')
-
-        if next_link:
-            driver.execute_script("arguments[0].scrollIntoView();", next_link[0])
-            next_link[0].click()
-
-            time.sleep(SLEEP)
 
     # TODO remove pun
     pred_dicts = list()
