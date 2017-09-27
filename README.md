@@ -3,6 +3,11 @@ http://github.com/hemmendinger/gjopen-utilities
 
 Credentials: I figured it is least annoying to just login manually. 
 Maybe will save the cookie in the future, but am avoiding any application state for now. 
+## Next Priorities
+Page through and get all forecasts automatically for larger questions
+Get a user's forecast history for scoring against median
+
+
 
 ## TODO: Timestamp handling
 It might be necessary to explictly be setting a time as a UTC time,
@@ -50,7 +55,10 @@ But we don't want to repeatedly download the page and test against it
 filter_forecasts
 carry_forward_my_forecasts
 
-## References
+
+
+## References & Notes
+### Analysis
 Ordered categorical scoring rule, for questions with ordered ranges; providing extra points for closeness
 - http://training.goodjudgment.com/Ordered_Categorical_Scoring_Rule.pdf
 - https://www.gjopen.com/faq
