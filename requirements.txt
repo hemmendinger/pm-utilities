@@ -1,0 +1,27 @@
+attrs==17.2.0  # https://github.com/python-attrs/attrs
+decorator==4.1.2
+jedi==0.10.2
+pexpect==4.2.1
+pickleshare==0.7.4
+prompt-toolkit==1.0.15
+ptyprocess==0.5.2
+Pygments==2.2.0
+simplegeneric==0.8.1
+six==1.10.0
+traitlets==4.3.2
+wcwidth==0.1.7
+
+# Data wrangling
+numpy==1.13.*
+pyarrow==0.7.*
+
+# Testing
+hypothesis==3.28.2
+ipython==6.1.0
+ipython-genutils==0.2.0
+
+
+# Web Scraping
+beautifulsoup4==4.6.0
+lxml==3.8.0
+selenium==3.5.0
