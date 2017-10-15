@@ -45,10 +45,10 @@ def get_question_info(driver, active):
 
     # Get question open and close UTC times
     openclose = driver.find_element_by_class_name('question-openclose').find_elements_by_tag_name('small')
-    open = openclose[2].get_attribute('data-localizable-timestamp')
-    info['open'] = datetime.datetime.strptime(open, '%Y-%m-%dT%H:%M:%SZ')
-    close = openclose[5].get_attribute('data-localizable-timestamp')
-    info['close'] = datetime.datetime.strptime(close, '%Y-%m-%dT%H:%M:%SZ')
+    open_ts = openclose[2].get_attribute('data-localizable-timestamp')
+    info['open'] = datetime.datetime.strptime(open_ts, '%Y-%m-%dT%H:%M:%SZ')
+    close_ts = openclose[5].get_attribute('data-localizable-timestamp')
+    info['close'] = datetime.datetime.strptime(close_ts, '%Y-%m-%dT%H:%M:%SZ')
 
     return info
 
