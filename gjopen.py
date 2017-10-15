@@ -19,7 +19,7 @@ def get_page_driver():
     return driver
 
 
-def get_question_info(driver):
+def get_question_info(driver, active):
     element = driver.find_element_by_xpath('//*[@id="question-detail-tabs"]/li[3]/a')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     element.click()
@@ -35,15 +35,19 @@ def get_question_info(driver):
     info['my no of forecasts'] = int(h2[3].text)
 
     # Get answer choices
-    info['answers'] = [x.text for x in driver.find_elements_by_class_name('answer-name')]
+    if active:
+        info['answers'] = [x.text for x in driver.find_elements_by_class_name('answer-name')]
+    else:
+        # If question is inactive/resolved
+        # Might be possible to use this for unresolved questions if the parent container for labels is consistent
+        # for both resolved or unresolved questions, otherwise "garbage" is retrieved for active questions
+        info['answers'] = [label.text for label in driver.find_elements_by_tag_name('label')]
 
     # Get question open and close UTC times
-    open = driver.find_element_by_xpath('//*[@id="main-container"]/div[2]/div[1]/div[1]/div[1]/span[2]/small/span')
-    open = open.get_attribute('data-localizable-timestamp')
+    openclose = driver.find_element_by_class_name('question-openclose').find_elements_by_tag_name('small')
+    open = openclose[2].get_attribute('data-localizable-timestamp')
     info['open'] = datetime.datetime.strptime(open, '%Y-%m-%dT%H:%M:%SZ')
-
-    close = driver.find_element_by_xpath('//*[@id="main-container"]/div[2]/div[1]/div[1]/div[1]/span[4]/small/span')
-    close = close.get_attribute('data-localizable-timestamp')
+    close = openclose[5].get_attribute('data-localizable-timestamp')
     info['close'] = datetime.datetime.strptime(close, '%Y-%m-%dT%H:%M:%SZ')
 
     return info
